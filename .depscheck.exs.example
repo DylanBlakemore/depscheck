@@ -1,0 +1,17 @@
+# Depscheck Configuration Example
+#
+# Copy this file to .depscheck.exs in your project root and customize as needed.
+# This file is optional - if it doesn't exist, depscheck will use default settings.
+
+%{
+  # List of package names to ignore during license checking
+  # Useful for:
+  # - Packages you have special permission to use
+  # - Dev/test only dependencies that don't ship with your product
+  # - Packages with unclear licenses that you've manually verified
+  ignored_packages: [
+    # Example: "some_gpl_package",
+    # Example: "proprietary_internal_tool"
+  ]
+}
+

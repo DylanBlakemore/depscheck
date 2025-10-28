@@ -9,7 +9,8 @@ defmodule Depscheck.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
-      dialyzer: dialyzer()
+      dialyzer: dialyzer(),
+      licenses: ["MIT"]
     ]
   end
 
@@ -30,7 +31,13 @@ defmodule Depscheck.MixProject do
 
   defp aliases do
     [
-      precommit: ["format", "test", "credo --strict", "dialyzer"]
+      precommit: ["format --check-formatted", "test", "credo --strict", "dialyzer"]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [precommit: :test]
     ]
   end
 
