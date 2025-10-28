@@ -56,14 +56,19 @@ defmodule Depscheck.MixProject do
         "Changelog" => "https://github.com/dylanblakemore/depscheck/blob/main/CHANGELOG.md"
       },
       files: ~w(lib .formatter.exs mix.exs README.md LICENSE CHANGELOG.md
-                LICENSE_COMPATIBILITY_RULES.md .depscheck.exs.example)
+                LICENSE_COMPATIBILITY_RULES.md RELEASE.md .depscheck.exs.example)
     ]
   end
 
   defp docs do
     [
       main: "readme",
-      extras: ["README.md", "LICENSE_COMPATIBILITY_RULES.md", "CHANGELOG.md"],
+      extras: [
+        "README.md",
+        "LICENSE_COMPATIBILITY_RULES.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
       source_ref: "v1.0.0"
     ]
   end

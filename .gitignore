@@ -26,3 +26,4 @@ erl_crash.dump
 
 # Test coverage
 /cover/
+/doc/
