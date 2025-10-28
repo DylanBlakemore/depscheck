@@ -283,8 +283,16 @@ defmodule Mix.Tasks.Version do
 
   defp create_github_release(version, entries) do
     # Check if gh CLI is installed
-    case System.cmd("gh", ["--version"], stderr_to_stdout: true) do
-      {_output, 0} ->
+    case System.find_executable("gh") do
+      nil ->
+        IO.puts("")
+        IO.puts(IO.ANSI.yellow() <> "GitHub CLI (gh) not found." <> IO.ANSI.reset())
+        IO.puts("Install it from: https://cli.github.com/")
+        IO.puts("")
+        IO.puts("Or create release manually:")
+        IO.puts("  https://github.com/dylanblakemore/depscheck/releases/new")
+
+      _path ->
         IO.puts("")
         IO.puts("Creating GitHub release...")
 
@@ -310,15 +318,6 @@ defmodule Mix.Tasks.Version do
             IO.puts(IO.ANSI.yellow() <> "⚠ Failed to create GitHub release" <> IO.ANSI.reset())
             IO.puts("Create manually: https://github.com/dylanblakemore/depscheck/releases/new")
         end
-
-      {_output, _code} ->
-        IO.puts("")
-        IO.puts(IO.ANSI.yellow() <> "GitHub CLI (gh) not found." <> IO.ANSI.reset())
-        IO.puts("Install it from: https://cli.github.com/")
-
-        IO.puts(
-          "Or create release manually: https://github.com/dylanblakemore/depscheck/releases/new"
-        )
     end
   end
 
