@@ -208,6 +208,16 @@ mix test
 mix precommit  # Runs format, test, credo, and dialyzer
 ```
 
+### Releasing
+
+To bump the version and prepare for release:
+
+```bash
+mix version patch  # or minor, or major
+```
+
+See [RELEASE.md](RELEASE.md) for the full release process.
+
 ## Inspiration
 
 This project was inspired by [hex_licenses](https://github.com/ericmj/hex_licenses) by Eric Meadows-Jönsson. The approach of reading license information from local `hex_metadata.config` files (rather than making API calls) was adapted from that project. Thank you to Eric and the Hex team for making this pattern available!

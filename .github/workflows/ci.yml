@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: Test & Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18.0"
+          otp-version: "27.0"
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-build-
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Run tests
+        run: mix test
+
+      - name: Run Credo
+        run: mix credo --strict
+
+      - name: Restore PLT cache
+        uses: actions/cache@v4
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-plt-
+
+      - name: Run Dialyzer
+        run: mix dialyzer
+
+      - name: Check dependency licenses
+        run: mix depscheck

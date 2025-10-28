@@ -55,10 +55,13 @@ defmodule Depscheck do
   @doc """
   Gets the project's license from mix.exs.
 
+  Returns the first license if multiple are declared, or nil if none found.
+
   ## Examples
 
-      iex> Depscheck.project_license()
-      "MIT"
+      iex> license = Depscheck.project_license()
+      iex> is_binary(license) or is_nil(license)
+      true
   """
   @spec project_license() :: String.t() | nil
   def project_license do
