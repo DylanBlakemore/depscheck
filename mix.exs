@@ -4,7 +4,7 @@ defmodule Depscheck.MixProject do
   def project do
     [
       app: :depscheck,
-      version: "1.0.2",
+      version: "1.0.3",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -69,7 +69,7 @@ defmodule Depscheck.MixProject do
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      source_ref: "v1.0.2"
+      source_ref: "v1.0.3"
     ]
   end
 
