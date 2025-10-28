@@ -39,10 +39,12 @@ Modern software projects depend on numerous third-party packages, each with thei
 ### 5. Core Features
 
 #### 5.1 License Detection
-- Parse `mix.exs` and `mix.lock` files
-- Extract license information from Hex packages
+- Parse `mix.exs` for project license
+- Parse `mix.lock` to identify dependencies
+- Extract license information from local `hex_metadata.config` files (no API calls needed)
 - Support for multiple license formats (SPDX, custom)
 - Detect license compatibility issues
+- Works completely offline (uses metadata downloaded by `mix deps.get`)
 
 #### 5.2 Intelligent License Analysis
 - Automatic license compatibility detection
@@ -92,7 +94,8 @@ Modern software projects depend on numerous third-party packages, each with thei
 #### 8.1 Performance
 - Must complete license checking in < 5 seconds for projects with < 100 dependencies
 - Memory usage should not exceed 100MB for typical projects
-- Should not require internet connectivity for cached license data
+- Works completely offline by reading local hex_metadata.config files
+- No API calls or network requests required
 
 #### 8.2 Compatibility
 - Elixir 1.18+
@@ -271,10 +274,11 @@ Depscheck/
 
 **Rationale:**
 - Excellent for CLI tools and system utilities
-- Built-in concurrency for parallel license checking
+- Built-in file system operations for reading hex_metadata.config
 - Strong pattern matching for license parsing
 - Excellent testing framework (ExUnit)
 - Easy deployment and distribution
+- No external HTTP dependencies needed (reads local files)
 
 #### 2.2 Package Management: Mix
 **Decision:** Use Mix for dependency management and project structure.
@@ -297,22 +301,26 @@ Depscheck/
 ### 3. Data Management
 
 #### 3.1 License Data Storage
-**Decision:** Use in-memory caching with optional persistent storage, plus embedded knowledge base.
+**Decision:** Read license data directly from local hex_metadata.config files, plus embedded knowledge base.
 
 **Rationale:**
-- Fast access for repeated checks
-- Reduces API calls to Hex
-- Can work offline with cached data
+- No caching needed - data is already local in deps/ directory
+- Works completely offline
+- Fast file system reads
 - Built-in license knowledge eliminates external dependencies
-- Simple implementation
+- Simple implementation with no state management
 
 **Implementation:**
 ```elixir
-# In-memory ETS table for license cache
-:ets.new(:license_cache, [:set, :public, :named_table])
-
-# Optional persistent cache using DETS
-:dets.open_file(:license_cache, [{:file, "license_cache.dets"}])
+# Read license from local hex metadata file
+def get_dependency_license(package_name) do
+  Mix.Project.deps_path()
+  |> Path.join(package_name)
+  |> Path.join("hex_metadata.config")
+  |> String.to_charlist()
+  |> :file.consult()
+  |> extract_licenses()
+end
 
 # Embedded license compatibility knowledge base
 @license_knowledge_base %{
@@ -421,32 +429,25 @@ end
 
 ### 5. External Dependencies
 
-#### 5.1 HTTP Client: Mint
-**Decision:** Use Mint for HTTP requests to Hex API.
+#### 5.1 Minimal Dependencies
+**Decision:** Use only built-in Elixir/OTP functionality for core features.
 
 **Rationale:**
-- Lightweight and fast
-- Good for simple API calls
-- No external dependencies
-- Excellent error handling
+- No HTTP client needed (reads local files)
+- No JSON parsing needed (hex_metadata.config uses Erlang terms)
+- Uses `:file.consult/1` for reading metadata
+- Uses built-in `OptionParser` for CLI
+- Minimal external dependencies = easier maintenance
+- Faster installation and compilation
 
-#### 5.2 JSON Parsing: Jason
-**Decision:** Use Jason for JSON parsing.
+#### 5.2 Development Dependencies Only
+**Decision:** External dependencies only for development tooling.
 
-**Rationale:**
-- Fast and memory efficient
-- Pure Elixir implementation
-- Excellent error handling
-- Widely used in Elixir community
-
-#### 5.3 CLI: OptionParser
-**Decision:** Use Elixir's built-in OptionParser for CLI functionality.
-
-**Rationale:**
-- No external dependencies
-- Sufficient for current needs
-- Easy to extend
-- Consistent with Elixir tooling
+**Dependencies:**
+- `credo` - Code quality and style checking
+- `dialyxir` - Static type analysis
+- `ex_doc` - Documentation generation
+- `stream_data` - Property-based testing (optional)
 
 ### 5. Testing Strategy
 
@@ -604,12 +605,11 @@ end
 - [ ] Unit tests
 
 ### Phase 2: Enhanced Features (v0.2.0)
-- [ ] Hex API integration
-- [ ] Caching system
 - [ ] Conflict resolution engine with recommendations
-- [ ] Multiple output formats
+- [ ] Multiple output formats (JSON, GitHub Actions, GitLab CI)
 - [ ] CI/CD integration examples
 - [ ] Integration tests
+- [ ] Support for git/path dependencies
 
 ### Phase 3: Advanced Features (v0.3.0)
 - [ ] Advanced reporting with smart recommendations
