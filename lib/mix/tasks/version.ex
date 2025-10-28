@@ -105,8 +105,25 @@ defmodule Mix.Tasks.Version do
       IO.puts("(You may need to select an organization if prompted)")
       IO.puts("")
 
-      # Use Mix.Task.run to properly handle interactive prompts
-      Mix.Task.run("hex.publish", [])
+      # Run hex.publish with inherited stdio for interactive prompts
+      {_output, exit_code} =
+        System.cmd("mix", ["hex.publish"],
+          stderr_to_stdout: true,
+          into: IO.stream(:stdio, :line)
+        )
+
+      case exit_code do
+        0 ->
+          IO.puts("")
+          IO.puts(IO.ANSI.green() <> "✓ Published to Hex.pm!" <> IO.ANSI.reset())
+
+        _code ->
+          IO.puts("")
+
+          IO.puts(
+            IO.ANSI.yellow() <> "⚠ Hex publish had issues. Check output above." <> IO.ANSI.reset()
+          )
+      end
     else
       IO.puts("")
       IO.puts(IO.ANSI.yellow() <> "Skipping Hex publish." <> IO.ANSI.reset())
