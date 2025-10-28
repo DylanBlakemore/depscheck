@@ -100,8 +100,13 @@ defmodule Mix.Tasks.Version do
     IO.puts(IO.ANSI.cyan() <> "=== Hex Publishing ===" <> IO.ANSI.reset())
 
     if Mix.shell().yes?("Publish to Hex.pm?") do
+      IO.puts("")
       IO.puts("Running mix hex.publish...")
-      System.cmd("mix", ["hex.publish"], into: IO.stream(:stdio, :line))
+      IO.puts("(You may need to select an organization if prompted)")
+      IO.puts("")
+
+      # Use Mix.Task.run to properly handle interactive prompts
+      Mix.Task.run("hex.publish", [])
     else
       IO.puts("")
       IO.puts(IO.ANSI.yellow() <> "Skipping Hex publish." <> IO.ANSI.reset())
