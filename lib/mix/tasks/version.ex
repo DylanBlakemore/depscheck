@@ -95,46 +95,27 @@ defmodule Mix.Tasks.Version do
       IO.puts("  git push origin main --tags")
     end
 
-    # Step 5: Hex publish
+    # Step 5: GitHub Release
     IO.puts("")
-    IO.puts(IO.ANSI.cyan() <> "=== Hex Publishing ===" <> IO.ANSI.reset())
+    IO.puts(IO.ANSI.cyan() <> "=== GitHub Release ===" <> IO.ANSI.reset())
 
-    if Mix.shell().yes?("Publish to Hex.pm?") do
-      IO.puts("")
-      IO.puts("Running mix hex.publish...")
-      IO.puts("(You may need to select an organization if prompted)")
-      IO.puts("")
-
-      # Run hex.publish with inherited stdio for interactive prompts
-      {_output, exit_code} =
-        System.cmd("mix", ["hex.publish"],
-          stderr_to_stdout: true,
-          into: IO.stream(:stdio, :line)
-        )
-
-      case exit_code do
-        0 ->
-          IO.puts("")
-          IO.puts(IO.ANSI.green() <> "✓ Published to Hex.pm!" <> IO.ANSI.reset())
-
-        _code ->
-          IO.puts("")
-
-          IO.puts(
-            IO.ANSI.yellow() <> "⚠ Hex publish had issues. Check output above." <> IO.ANSI.reset()
-          )
-      end
+    if Mix.shell().yes?("Create GitHub release?") do
+      create_github_release(new_version, changelog_entries)
     else
       IO.puts("")
-      IO.puts(IO.ANSI.yellow() <> "Skipping Hex publish." <> IO.ANSI.reset())
-      IO.puts("To publish manually: mix hex.publish")
+      IO.puts(IO.ANSI.yellow() <> "Skipping GitHub release." <> IO.ANSI.reset())
+      IO.puts("To create manually: https://github.com/dylanblakemore/depscheck/releases/new")
     end
+
+    # Step 6: Hex publish
+    IO.puts("")
+    IO.puts(IO.ANSI.cyan() <> "=== Hex Publishing ===" <> IO.ANSI.reset())
+    IO.puts("")
+    IO.puts("To publish to Hex.pm, run:")
+    IO.puts(IO.ANSI.green() <> "  mix hex.publish" <> IO.ANSI.reset())
 
     IO.puts("")
     IO.puts(IO.ANSI.green() <> "✓ Release process complete!" <> IO.ANSI.reset())
-    IO.puts("")
-    IO.puts("Don't forget to create a GitHub release:")
-    IO.puts("  https://github.com/dylanblakemore/depscheck/releases/new")
   end
 
   def run([]) do
@@ -298,5 +279,75 @@ defmodule Mix.Tasks.Version do
       IO.puts("  git push origin main")
       IO.puts("  git push origin v#{version}")
     end
+  end
+
+  defp create_github_release(version, entries) do
+    # Check if gh CLI is installed
+    case System.cmd("gh", ["--version"], stderr_to_stdout: true) do
+      {_output, 0} ->
+        IO.puts("")
+        IO.puts("Creating GitHub release...")
+
+        # Build release notes from changelog entries
+        notes = build_release_notes(entries)
+
+        # Create the release
+        {_output, exit_code} =
+          System.cmd(
+            "gh",
+            ["release", "create", "v#{version}", "--title", "v#{version}", "--notes", notes],
+            stderr_to_stdout: true,
+            into: IO.stream(:stdio, :line)
+          )
+
+        case exit_code do
+          0 ->
+            IO.puts("")
+            IO.puts(IO.ANSI.green() <> "✓ GitHub release created!" <> IO.ANSI.reset())
+
+          _code ->
+            IO.puts("")
+            IO.puts(IO.ANSI.yellow() <> "⚠ Failed to create GitHub release" <> IO.ANSI.reset())
+            IO.puts("Create manually: https://github.com/dylanblakemore/depscheck/releases/new")
+        end
+
+      {_output, _code} ->
+        IO.puts("")
+        IO.puts(IO.ANSI.yellow() <> "GitHub CLI (gh) not found." <> IO.ANSI.reset())
+        IO.puts("Install it from: https://cli.github.com/")
+
+        IO.puts(
+          "Or create release manually: https://github.com/dylanblakemore/depscheck/releases/new"
+        )
+    end
+  end
+
+  defp build_release_notes(entries) do
+    sections =
+      [
+        build_release_section("Added", entries.added),
+        build_release_section("Changed", entries.changed),
+        build_release_section("Fixed", entries.fixed)
+      ]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.join("\n\n")
+
+    if sections != "" do
+      sections
+    else
+      "No changes documented."
+    end
+  end
+
+  defp build_release_section(_name, []), do: nil
+
+  defp build_release_section(name, items) do
+    items_text = Enum.map_join(items, "\n", &"- #{&1}")
+
+    """
+    ### #{name}
+
+    #{items_text}
+    """
   end
 end
