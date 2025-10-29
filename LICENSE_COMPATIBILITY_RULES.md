@@ -60,6 +60,20 @@ Depscheck groups licenses into three main categories:
 
 ---
 
+### 4. Proprietary Licenses
+**Examples:** All Rights Reserved, Unlicensed, Proprietary
+
+**What they mean:**
+- "This code is not licensed for others to use"
+- All rights reserved by the author
+- No permission to use, copy, modify, or distribute
+- Cannot be used in any other project without explicit permission
+- Default state when no license is declared
+
+**Think of them as:** "This code belongs to me and you can't use it"
+
+---
+
 ## Compatibility Rules (MVP)
 
 Here's what Depscheck checks:
@@ -114,6 +128,34 @@ Here's what Depscheck checks:
 - Proprietary project using GPL dependency
 
 **Why:** GPL requires your entire project to be GPL-compatible. If you're MIT licensed, you can't make that promise.
+
+---
+
+### Rule 4: Proprietary Dependencies
+**Proprietary license dependencies are ONLY compatible with:**
+- ✅ Other proprietary projects (All Rights Reserved, Unlicensed, etc.)
+- ❌ Permissive projects (MIT, Apache, BSD)
+- ❌ Weak copyleft projects (LGPL, MPL)
+- ❌ Strong copyleft projects (GPL)
+
+✅ **Examples that work:**
+- Proprietary project using proprietary dependency
+- All Rights Reserved project using Unlicensed dependency
+
+❌ **Examples that DON'T work:**
+- MIT project using proprietary dependency ⚠️ **No legal right to use**
+- Apache project using unlicensed dependency ⚠️ **No legal right to use**
+
+**Why:** Proprietary code has no license, meaning you have no legal right to use it. This applies to both your project and your dependencies.
+
+---
+
+### Rule 5: Unlicensed Dependencies
+**Unlicensed dependencies (unknown licenses) are treated as:**
+- ⚠️ **Warnings only** for open source projects (MIT, Apache, GPL, etc.)
+- ❌ **Blocked** for proprietary projects (no legal right to use)
+
+**Why:** Unknown licenses are risky - you don't know what permissions you have. For proprietary projects, this is especially dangerous since you have no legal right to use unlicensed code.
 
 ---
 
@@ -173,10 +215,14 @@ Here's what Depscheck checks:
 - ✅ Apache-2.0 dependencies
 - ✅ BSD dependencies
 - ✅ ISC dependencies
-- ❌ LGPL dependencies ⚠️ **(MVP flags as incompatible - future versions may allow with caveats)**
-- ❌ MPL dependencies ⚠️ **(MVP flags as incompatible)**
+- ✅ Proprietary dependencies (All Rights Reserved, Unlicensed, etc.)
+- ❌ LGPL dependencies ⚠️ **This will fail the check**
+- ❌ MPL dependencies ⚠️ **This will fail the check**
 - ❌ GPL dependencies ⚠️ **This will fail the check**
 - ❌ AGPL dependencies ⚠️ **This will fail the check**
+- ❌ Unlicensed dependencies ⚠️ **This will fail the check**
+
+**Important:** Depscheck will warn you: "Project has no license - treating as proprietary (all rights reserved)"
 
 ---
 
@@ -269,7 +315,7 @@ Future versions may include:
 | **MPL**             | ✅ Yes              | ✅ Yes                 | ❌ No                    |
 | **GPL**             | ✅ Yes              | ✅ Yes                 | ✅ Yes                   |
 | **AGPL**            | ✅ Yes              | ✅ Yes                 | ✅ Yes                   |
-| **Proprietary**     | ✅ Yes              | ❌ No (MVP)            | ❌ No                    |
+| **Proprietary**     | ✅ Yes              | ❌ No                   | ❌ No                    |
 
 ---
 

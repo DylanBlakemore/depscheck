@@ -11,7 +11,9 @@ defmodule DepscheckTest do
       assert Map.has_key?(result, :project_license)
       assert Map.has_key?(result, :dependencies)
       assert Map.has_key?(result, :violations)
+      assert Map.has_key?(result, :warnings)
       assert result.status in [:pass, :fail]
+      assert is_list(result.warnings)
     end
   end
 

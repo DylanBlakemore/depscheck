@@ -17,7 +17,8 @@ defmodule Depscheck.Config do
   @config_filename ".depscheck.exs"
 
   @default_config %{
-    ignored_packages: []
+    ignored_packages: [],
+    project_license: nil
   }
 
   @doc """
@@ -50,8 +51,10 @@ defmodule Depscheck.Config do
   defp load_config_file(path) do
     {config, _binding} = Code.eval_file(path)
 
-    if is_map(config) and Map.has_key?(config, :ignored_packages) do
-      Map.merge(@default_config, config)
+    if is_map(config) do
+      known_keys = Map.keys(@default_config)
+      filtered_config = Map.take(config, known_keys)
+      Map.merge(@default_config, filtered_config)
     else
       @default_config
     end

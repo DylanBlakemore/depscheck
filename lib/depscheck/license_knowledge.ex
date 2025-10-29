@@ -30,6 +30,12 @@ defmodule Depscheck.LicenseKnowledge do
     "AGPL-3.0"
   ]
 
+  @proprietary_licenses [
+    "All Rights Reserved",
+    "Unlicensed",
+    "Proprietary"
+  ]
+
   @doc """
   Returns the category for a given license name.
 
@@ -52,6 +58,7 @@ defmodule Depscheck.LicenseKnowledge do
       normalized in normalize_list(@permissive_licenses) -> :permissive
       normalized in normalize_list(@weak_copyleft_licenses) -> :weak_copyleft
       normalized in normalize_list(@strong_copyleft_licenses) -> :strong_copyleft
+      normalized in normalize_list(@proprietary_licenses) -> :proprietary
       true -> :unknown
     end
   end
@@ -93,6 +100,22 @@ defmodule Depscheck.LicenseKnowledge do
   end
 
   @doc """
+  Returns true if the license is proprietary.
+
+  ## Examples
+
+      iex> Depscheck.LicenseKnowledge.proprietary?("All Rights Reserved")
+      true
+
+      iex> Depscheck.LicenseKnowledge.proprietary?("MIT")
+      false
+  """
+  @spec proprietary?(String.t()) :: boolean()
+  def proprietary?(license_name) do
+    get_category(license_name) == :proprietary
+  end
+
+  @doc """
   Lists all licenses in a given category.
 
   ## Examples
@@ -104,6 +127,7 @@ defmodule Depscheck.LicenseKnowledge do
   def list_licenses_by_category(:permissive), do: @permissive_licenses
   def list_licenses_by_category(:weak_copyleft), do: @weak_copyleft_licenses
   def list_licenses_by_category(:strong_copyleft), do: @strong_copyleft_licenses
+  def list_licenses_by_category(:proprietary), do: @proprietary_licenses
   def list_licenses_by_category(:unknown), do: []
 
   defp normalize_license_name(license_name) do

@@ -13,7 +13,8 @@ defmodule Mix.Tasks.Depscheck do
   Create a `.depscheck.exs` file in your project root:
 
       %{
-        ignored_packages: ["some_package", "another_package"]
+        ignored_packages: ["some_package", "another_package"],
+        project_license: "All Rights Reserved"  # Override project license
       }
 
   ## Exit Codes
@@ -31,7 +32,7 @@ defmodule Mix.Tasks.Depscheck do
     Mix.Task.run("loadpaths")
 
     config = Config.load()
-    project_license = LicenseDetector.get_project_license()
+    project_license = LicenseDetector.get_project_license_with_config(config)
     dependencies = LicenseDetector.get_all_dependency_licenses()
 
     result = Compatibility.check_all(project_license, dependencies, config)
@@ -69,6 +70,16 @@ defmodule Mix.Tasks.Depscheck do
           print_dependency(dep, result)
       end
     end)
+
+    # Print warnings
+    if not Enum.empty?(result.warnings) do
+      IO.puts("")
+      IO.puts(IO.ANSI.yellow() <> "Warnings:" <> IO.ANSI.reset())
+
+      Enum.each(result.warnings, fn warning ->
+        IO.puts(IO.ANSI.yellow() <> "  ⚠ #{warning}" <> IO.ANSI.reset())
+      end)
+    end
 
     # Print summary
     IO.puts("")

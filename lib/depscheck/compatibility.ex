@@ -42,6 +42,7 @@ defmodule Depscheck.Compatibility do
           Types.check_result()
   def check_all(project_license, dependencies, config) do
     ignored = MapSet.new(config.ignored_packages)
+    warnings = generate_warnings(project_license, dependencies, config)
 
     {violations, checked_deps} =
       dependencies
@@ -55,11 +56,34 @@ defmodule Depscheck.Compatibility do
       status: if(Enum.empty?(violations), do: :pass, else: :fail),
       project_license: project_license,
       dependencies: Enum.reverse(checked_deps),
-      violations: violations
+      violations: violations,
+      warnings: warnings
     }
   end
 
-  # Unknown licenses - always compatible (warn but don't fail)
+  # Proprietary projects - only compatible with permissive dependencies
+  defp check_categories(:proprietary, :permissive, _proj_lic, _dep_lic) do
+    :compatible
+  end
+
+  defp check_categories(:proprietary, :weak_copyleft, _proj_lic, dep_lic) do
+    {:incompatible, "Weak copyleft license #{dep_lic} cannot be used in proprietary project"}
+  end
+
+  defp check_categories(:proprietary, :strong_copyleft, _proj_lic, dep_lic) do
+    {:incompatible, "Strong copyleft license #{dep_lic} cannot be used in proprietary project"}
+  end
+
+  defp check_categories(:proprietary, :proprietary, _proj_lic, _dep_lic) do
+    :compatible
+  end
+
+  defp check_categories(:proprietary, :unknown, _proj_lic, dep_lic) do
+    {:incompatible,
+     "Unlicensed dependency #{dep_lic} cannot be used - you have no legal right to use it"}
+  end
+
+  # Unknown licenses - always compatible (warn but don't fail) for non-proprietary projects
   defp check_categories(_proj_category, :unknown, _proj_lic, _dep_lic) do
     :compatible
   end
@@ -115,5 +139,32 @@ defmodule Depscheck.Compatibility do
           ["#{dep.name} (#{license}): #{reason}"]
       end
     end)
+  end
+
+  defp generate_warnings(project_license, dependencies, _config) do
+    warnings = []
+
+    # Warn if project has no license
+    warnings =
+      if is_nil(project_license) do
+        ["Project has no license - treating as proprietary (all rights reserved)"] ++ warnings
+      else
+        warnings
+      end
+
+    # Warn about unlicensed dependencies
+    unlicensed_warnings =
+      dependencies
+      |> Enum.flat_map(fn dep ->
+        dep.licenses
+        |> Enum.filter(fn license ->
+          LicenseKnowledge.get_category(license) == :unknown
+        end)
+        |> Enum.map(fn license ->
+          "Dependency #{dep.name} has unlicensed code (#{license}) - you have no legal right to use it"
+        end)
+      end)
+
+    warnings ++ unlicensed_warnings
   end
 end

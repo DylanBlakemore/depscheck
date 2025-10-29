@@ -46,7 +46,7 @@ defmodule Depscheck do
   @spec check() :: Types.check_result()
   def check do
     config = Config.load()
-    project_license = LicenseDetector.get_project_license()
+    project_license = LicenseDetector.get_project_license_with_config(config)
     dependencies = LicenseDetector.get_all_dependency_licenses()
 
     Compatibility.check_all(project_license, dependencies, config)

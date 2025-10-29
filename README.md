@@ -52,13 +52,30 @@ Violations:
 
 ### Configuration
 
-Create a `.depscheck.exs` file in your project root to ignore specific packages:
+Create a `.depscheck.exs` file in your project root to ignore specific packages or override the project license:
 
 ```elixir
 %{
-  ignored_packages: ["some_package", "another_package"]
+  ignored_packages: ["some_package", "another_package"],
+  project_license: "All Rights Reserved"  # Override project license
 }
 ```
+
+#### Project License Override
+
+You can override the project license detected from `mix.exs` by setting `project_license` in your configuration:
+
+```elixir
+# .depscheck.exs
+%{
+  project_license: "All Rights Reserved"  # Treat as proprietary
+}
+```
+
+This is useful for:
+- **Proprietary projects** that don't declare a license in `mix.exs`
+- **Testing** different license scenarios
+- **Explicit declaration** of proprietary status
 
 ### CI/CD Integration
 
@@ -155,6 +172,24 @@ Depscheck implements industry-standard license compatibility rules:
 - **Permissive licenses** (MIT, Apache-2.0, BSD) are compatible with everything
 - **Weak copyleft licenses** (LGPL, MPL) are compatible with most open source projects
 - **Strong copyleft licenses** (GPL, AGPL) require your entire project to be compatible
+- **Proprietary projects** can only use permissive dependencies (legally safe)
+
+### Proprietary Projects
+
+For projects without a license (proprietary/closed source), Depscheck:
+
+- **Warns** when no license is declared: "Project has no license - treating as proprietary"
+- **Only allows permissive dependencies** (MIT, Apache-2.0, BSD, etc.)
+- **Blocks copyleft dependencies** (GPL, LGPL, MPL) - legally incompatible
+- **Blocks unlicensed dependencies** - you have no legal right to use them
+
+### Warnings
+
+Depscheck provides helpful warnings for:
+
+- **Unlicensed projects** - reminds you that no license = proprietary
+- **Unlicensed dependencies** - warns about legal risks
+- **License compatibility issues** - explains why certain combinations don't work
 
 For detailed information about license compatibility rules, see [LICENSE_COMPATIBILITY_RULES.md](LICENSE_COMPATIBILITY_RULES.md).
 
@@ -191,6 +226,11 @@ deps = Depscheck.dependencies()
 ### Strong Copyleft
 - GPL-2.0, GPL-3.0
 - AGPL-3.0
+
+### Proprietary
+- All Rights Reserved
+- Unlicensed
+- Proprietary
 
 Unknown licenses are treated as compatible (warning only).
 
@@ -232,3 +272,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - [License Compatibility Rules](LICENSE_COMPATIBILITY_RULES.md) - Detailed explanation of compatibility logic
 - [hex_licenses](https://github.com/ericmj/hex_licenses) - Inspiration for this project
+

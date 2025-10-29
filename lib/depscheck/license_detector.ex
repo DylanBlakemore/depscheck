@@ -26,6 +26,28 @@ defmodule Depscheck.LicenseDetector do
   end
 
   @doc """
+  Detects the project's license with configuration override support.
+
+  First checks for project_license in .depscheck.exs config, then falls back
+  to mix.exs detection.
+
+  ## Examples
+
+      iex> Depscheck.LicenseDetector.get_project_license_with_config(%{project_license: "All Rights Reserved"})
+      "All Rights Reserved"
+
+      iex> Depscheck.LicenseDetector.get_project_license_with_config(%{project_license: nil})
+      "MIT"
+  """
+  @spec get_project_license_with_config(Types.config()) :: String.t() | nil
+  def get_project_license_with_config(config) do
+    case config.project_license do
+      nil -> get_project_license()
+      license -> license
+    end
+  end
+
+  @doc """
   Extracts all dependencies and their licenses from the deps directory.
 
   Returns a list of dependency maps with name and licenses.

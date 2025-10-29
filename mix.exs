@@ -19,7 +19,8 @@ defmodule Depscheck.MixProject do
       name: "Depscheck",
       source_url: "https://github.com/dylanblakemore/depscheck",
       homepage_url: "https://github.com/dylanblakemore/depscheck",
-      docs: docs()
+      docs: docs(),
+      licenses: ["MIT"]
     ]
   end
 

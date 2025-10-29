@@ -3,7 +3,8 @@ defmodule Depscheck.Types do
   Type definitions for Depscheck.
   """
 
-  @type license_category :: :permissive | :weak_copyleft | :strong_copyleft | :unknown
+  @type license_category ::
+          :permissive | :weak_copyleft | :strong_copyleft | :proprietary | :unknown
 
   @type dependency :: %{
           name: String.t(),
@@ -14,10 +15,12 @@ defmodule Depscheck.Types do
           status: :pass | :fail,
           project_license: String.t() | nil,
           dependencies: [dependency()],
-          violations: [String.t()]
+          violations: [String.t()],
+          warnings: [String.t()]
         }
 
   @type config :: %{
-          ignored_packages: [String.t()]
+          ignored_packages: [String.t()],
+          project_license: String.t() | nil
         }
 end

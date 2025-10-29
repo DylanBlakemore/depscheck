@@ -14,7 +14,7 @@ defmodule Depscheck.ConfigTest do
   describe "load/0" do
     test "returns default config when no config file exists" do
       File.rm(@test_config_path)
-      assert Config.load() == %{ignored_packages: []}
+      assert Config.load() == %{ignored_packages: [], project_license: nil}
     end
 
     test "loads valid config file" do
@@ -37,7 +37,7 @@ defmodule Depscheck.ConfigTest do
 
       File.write!(@test_config_path, config_content)
 
-      assert Config.load() == %{ignored_packages: []}
+      assert Config.load() == %{ignored_packages: [], project_license: nil}
     end
 
     test "returns default when ignored_packages is missing" do
@@ -49,7 +49,7 @@ defmodule Depscheck.ConfigTest do
 
       File.write!(@test_config_path, config_content)
 
-      assert Config.load() == %{ignored_packages: []}
+      assert Config.load() == %{ignored_packages: [], project_license: nil}
     end
 
     test "returns default for malformed file" do
@@ -60,7 +60,7 @@ defmodule Depscheck.ConfigTest do
 
       File.write!(@test_config_path, config_content)
 
-      assert Config.load() == %{ignored_packages: []}
+      assert Config.load() == %{ignored_packages: [], project_license: nil}
     end
 
     test "loads empty ignored_packages list" do
@@ -79,7 +79,7 @@ defmodule Depscheck.ConfigTest do
 
   describe "default/0" do
     test "returns default configuration" do
-      assert Config.default() == %{ignored_packages: []}
+      assert Config.default() == %{ignored_packages: [], project_license: nil}
     end
   end
 end

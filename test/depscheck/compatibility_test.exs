@@ -62,6 +62,54 @@ defmodule Depscheck.CompatibilityTest do
       assert Compatibility.check_compatibility(nil, "MIT") == :compatible
       assert Compatibility.check_compatibility(nil, "GPL-3.0") == :compatible
     end
+
+    test "proprietary project can use permissive dependencies" do
+      assert Compatibility.check_compatibility("All Rights Reserved", "MIT") == :compatible
+      assert Compatibility.check_compatibility("All Rights Reserved", "Apache-2.0") == :compatible
+
+      assert Compatibility.check_compatibility("All Rights Reserved", "BSD-3-Clause") ==
+               :compatible
+    end
+
+    test "proprietary project cannot use weak copyleft dependencies" do
+      assert {:incompatible, reason} =
+               Compatibility.check_compatibility("All Rights Reserved", "LGPL-3.0")
+
+      assert reason =~ "proprietary project"
+      assert reason =~ "LGPL-3.0"
+
+      assert {:incompatible, reason} =
+               Compatibility.check_compatibility("All Rights Reserved", "MPL-2.0")
+
+      assert reason =~ "proprietary project"
+    end
+
+    test "proprietary project cannot use strong copyleft dependencies" do
+      assert {:incompatible, reason} =
+               Compatibility.check_compatibility("All Rights Reserved", "GPL-3.0")
+
+      assert reason =~ "proprietary project"
+      assert reason =~ "GPL-3.0"
+
+      assert {:incompatible, reason} =
+               Compatibility.check_compatibility("All Rights Reserved", "AGPL-3.0")
+
+      assert reason =~ "proprietary project"
+    end
+
+    test "proprietary project can use other proprietary dependencies" do
+      assert Compatibility.check_compatibility("All Rights Reserved", "Proprietary") ==
+               :compatible
+
+      assert Compatibility.check_compatibility("All Rights Reserved", "Unlicensed") == :compatible
+    end
+
+    test "proprietary project cannot use unlicensed dependencies" do
+      assert {:incompatible, reason} =
+               Compatibility.check_compatibility("All Rights Reserved", "Unknown-License")
+
+      assert reason =~ "no legal right to use it"
+    end
   end
 
   describe "check_all/3" do
@@ -71,13 +119,14 @@ defmodule Depscheck.CompatibilityTest do
         %{name: "plug", licenses: ["Apache-2.0"]}
       ]
 
-      config = %{ignored_packages: []}
+      config = %{ignored_packages: [], project_license: nil}
 
       result = Compatibility.check_all("MIT", deps, config)
 
       assert result.status == :pass
       assert result.project_license == "MIT"
       assert Enum.empty?(result.violations)
+      assert is_list(result.warnings)
       assert length(result.dependencies) == 2
     end
 
@@ -87,7 +136,7 @@ defmodule Depscheck.CompatibilityTest do
         %{name: "gpl_package", licenses: ["GPL-3.0"]}
       ]
 
-      config = %{ignored_packages: []}
+      config = %{ignored_packages: [], project_license: nil}
 
       result = Compatibility.check_all("MIT", deps, config)
 
@@ -118,7 +167,7 @@ defmodule Depscheck.CompatibilityTest do
         %{name: "dual_licensed", licenses: ["MIT", "Apache-2.0"]}
       ]
 
-      config = %{ignored_packages: []}
+      config = %{ignored_packages: [], project_license: nil}
 
       result = Compatibility.check_all("MIT", deps, config)
 
@@ -131,7 +180,7 @@ defmodule Depscheck.CompatibilityTest do
         %{name: "bad_dual", licenses: ["GPL-3.0", "AGPL-3.0"]}
       ]
 
-      config = %{ignored_packages: []}
+      config = %{ignored_packages: [], project_license: nil}
 
       result = Compatibility.check_all("MIT", deps, config)
 
@@ -150,9 +199,86 @@ defmodule Depscheck.CompatibilityTest do
     test "handles nil project license" do
       deps = [%{name: "jason", licenses: ["Apache-2.0"]}]
 
-      result = Compatibility.check_all(nil, deps, %{ignored_packages: []})
+      result = Compatibility.check_all(nil, deps, %{ignored_packages: [], project_license: nil})
 
       assert result.status == :pass
+    end
+
+    test "generates warning for unlicensed project" do
+      deps = [%{name: "jason", licenses: ["Apache-2.0"]}]
+
+      result = Compatibility.check_all(nil, deps, %{ignored_packages: [], project_license: nil})
+
+      assert result.status == :pass
+      assert length(result.warnings) == 1
+      assert hd(result.warnings) =~ "no license"
+      assert hd(result.warnings) =~ "proprietary"
+    end
+
+    test "generates warning for unlicensed dependencies" do
+      deps = [
+        %{name: "jason", licenses: ["Apache-2.0"]},
+        %{name: "unlicensed_dep", licenses: ["Unknown-License"]}
+      ]
+
+      result = Compatibility.check_all("MIT", deps, %{ignored_packages: [], project_license: nil})
+
+      assert result.status == :pass
+      assert length(result.warnings) == 1
+      assert hd(result.warnings) =~ "unlicensed_dep"
+      assert hd(result.warnings) =~ "no legal right to use it"
+    end
+
+    test "proprietary project with permissive dependencies passes" do
+      deps = [
+        %{name: "jason", licenses: ["Apache-2.0"]},
+        %{name: "plug", licenses: ["MIT"]}
+      ]
+
+      result =
+        Compatibility.check_all("All Rights Reserved", deps, %{
+          ignored_packages: [],
+          project_license: nil
+        })
+
+      assert result.status == :pass
+      assert Enum.empty?(result.violations)
+    end
+
+    test "proprietary project with copyleft dependencies fails" do
+      deps = [
+        %{name: "jason", licenses: ["Apache-2.0"]},
+        %{name: "gpl_package", licenses: ["GPL-3.0"]}
+      ]
+
+      result =
+        Compatibility.check_all("All Rights Reserved", deps, %{
+          ignored_packages: [],
+          project_license: nil
+        })
+
+      assert result.status == :fail
+      assert length(result.violations) == 1
+      assert hd(result.violations) =~ "gpl_package"
+      assert hd(result.violations) =~ "proprietary project"
+    end
+
+    test "proprietary project with unlicensed dependencies fails" do
+      deps = [
+        %{name: "jason", licenses: ["Apache-2.0"]},
+        %{name: "unlicensed_dep", licenses: ["Unknown-License"]}
+      ]
+
+      result =
+        Compatibility.check_all("All Rights Reserved", deps, %{
+          ignored_packages: [],
+          project_license: nil
+        })
+
+      assert result.status == :fail
+      assert length(result.violations) == 1
+      assert hd(result.violations) =~ "unlicensed_dep"
+      assert hd(result.violations) =~ "no legal right to use it"
     end
   end
 end

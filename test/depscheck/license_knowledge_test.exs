@@ -40,9 +40,15 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("AGPL-3.0") == :strong_copyleft
     end
 
+    test "returns :proprietary for proprietary licenses" do
+      assert LicenseKnowledge.get_category("All Rights Reserved") == :proprietary
+      assert LicenseKnowledge.get_category("Unlicensed") == :proprietary
+      assert LicenseKnowledge.get_category("Proprietary") == :proprietary
+    end
+
     test "returns :unknown for unrecognized licenses" do
       assert LicenseKnowledge.get_category("Unknown-License") == :unknown
-      assert LicenseKnowledge.get_category("Proprietary") == :unknown
+      assert LicenseKnowledge.get_category("Custom-License") == :unknown
     end
 
     test "handles case insensitive license names" do
@@ -95,6 +101,28 @@ defmodule Depscheck.LicenseKnowledgeTest do
     end
   end
 
+  describe "proprietary?/1" do
+    test "returns true for proprietary licenses" do
+      assert LicenseKnowledge.proprietary?("All Rights Reserved")
+      assert LicenseKnowledge.proprietary?("Unlicensed")
+      assert LicenseKnowledge.proprietary?("Proprietary")
+    end
+
+    test "returns false for permissive licenses" do
+      refute LicenseKnowledge.proprietary?("MIT")
+      refute LicenseKnowledge.proprietary?("Apache-2.0")
+    end
+
+    test "returns false for copyleft licenses" do
+      refute LicenseKnowledge.proprietary?("GPL-3.0")
+      refute LicenseKnowledge.proprietary?("LGPL-3.0")
+    end
+
+    test "returns false for unknown licenses" do
+      refute LicenseKnowledge.proprietary?("Unknown")
+    end
+  end
+
   describe "list_licenses_by_category/1" do
     test "returns permissive licenses" do
       licenses = LicenseKnowledge.list_licenses_by_category(:permissive)
@@ -114,6 +142,14 @@ defmodule Depscheck.LicenseKnowledgeTest do
       licenses = LicenseKnowledge.list_licenses_by_category(:strong_copyleft)
       assert "GPL-3.0" in licenses
       assert "AGPL-3.0" in licenses
+      assert length(licenses) == 3
+    end
+
+    test "returns proprietary licenses" do
+      licenses = LicenseKnowledge.list_licenses_by_category(:proprietary)
+      assert "All Rights Reserved" in licenses
+      assert "Unlicensed" in licenses
+      assert "Proprietary" in licenses
       assert length(licenses) == 3
     end
 
