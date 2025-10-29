@@ -12,6 +12,7 @@ defmodule Depscheck.LicenseKnowledge do
     "Apache-2.0",
     "BSD-2-Clause",
     "BSD-3-Clause",
+    "BSD-4-Clause",
     "ISC",
     "Unlicense"
   ]
@@ -121,7 +122,7 @@ defmodule Depscheck.LicenseKnowledge do
   ## Examples
 
       iex> Depscheck.LicenseKnowledge.list_licenses_by_category(:permissive)
-      ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense"]
+      ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "ISC", "Unlicense"]
   """
   @spec list_licenses_by_category(Types.license_category()) :: [String.t()]
   def list_licenses_by_category(:permissive), do: @permissive_licenses
@@ -134,6 +135,30 @@ defmodule Depscheck.LicenseKnowledge do
     license_name
     |> String.downcase()
     |> String.trim()
+    |> normalize_spacing_and_dashes()
+    |> normalize_common_variations()
+  end
+
+  defp normalize_spacing_and_dashes(license_name) do
+    license_name
+    # Convert spaces to dashes
+    |> String.replace(~r/\s+/, "-")
+    # Collapse multiple dashes
+    |> String.replace(~r/-+/, "-")
+    # Remove leading/trailing dashes
+    |> String.replace(~r/^-|-$/, "")
+  end
+
+  defp normalize_common_variations(license_name) do
+    license_name
+    # Normalize version numbers (any number.number -> number-number)
+    |> String.replace(~r/(\d+)\.(\d+)/, "\\1-\\2")
+    # Normalize "clause" variations (any number clause -> number-clause)
+    |> String.replace(~r/(\d+)\s*clause/i, "\\1-clause")
+    # Remove common suffixes like "license" (including any preceding dashes)
+    |> String.replace(~r/-?\s*license\s*$/i, "")
+    # Default BSD to BSD-3-Clause (most common variant)
+    |> String.replace(~r/^bsd$/, "bsd-3-clause")
   end
 
   defp normalize_list(licenses) do

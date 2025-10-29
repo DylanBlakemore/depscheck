@@ -61,6 +61,66 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category(" MIT ") == :permissive
       assert LicenseKnowledge.get_category("  GPL-3.0  ") == :strong_copyleft
     end
+
+    test "normalizes license name variations" do
+      # Space variations
+      assert LicenseKnowledge.get_category("Apache 2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD 2 Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD 3 Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD 4 Clause") == :permissive
+      assert LicenseKnowledge.get_category("GPL 2.0") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL 3.0") == :strong_copyleft
+      assert LicenseKnowledge.get_category("LGPL 2.1") == :weak_copyleft
+      assert LicenseKnowledge.get_category("LGPL 3.0") == :weak_copyleft
+
+      # License suffix variations
+      assert LicenseKnowledge.get_category("MIT License") == :permissive
+      assert LicenseKnowledge.get_category("MIT license") == :permissive
+
+      # Mixed spacing and dashes
+      assert LicenseKnowledge.get_category("Apache-2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD-2-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-3-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-4-Clause") == :permissive
+    end
+
+    test "handles real-world license variations from dependency metadata" do
+      # These are the exact variations you encountered
+      # Should map to BSD-3-Clause
+      assert LicenseKnowledge.get_category("BSD") == :permissive
+      assert LicenseKnowledge.get_category("Apache 2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD 2-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-4-Clause") == :permissive
+
+      # Additional edge cases
+      assert LicenseKnowledge.get_category("Apache-2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD-2-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-3-Clause") == :permissive
+      assert LicenseKnowledge.get_category("MIT") == :permissive
+      assert LicenseKnowledge.get_category("MIT License") == :permissive
+      assert LicenseKnowledge.get_category("GPL-2.0") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL 3.0") == :strong_copyleft
+      assert LicenseKnowledge.get_category("LGPL-2.1") == :weak_copyleft
+      assert LicenseKnowledge.get_category("LGPL 3.0") == :weak_copyleft
+    end
+
+    test "handles complex spacing and punctuation variations" do
+      # Multiple spaces
+      assert LicenseKnowledge.get_category("Apache  2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD   2   Clause") == :permissive
+
+      # Mixed dashes and spaces
+      assert LicenseKnowledge.get_category("Apache- 2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD -2- Clause") == :permissive
+
+      # Extra dashes
+      assert LicenseKnowledge.get_category("Apache--2.0") == :permissive
+      assert LicenseKnowledge.get_category("BSD---2---Clause") == :permissive
+
+      # Leading/trailing punctuation
+      assert LicenseKnowledge.get_category("-Apache-2.0-") == :permissive
+      assert LicenseKnowledge.get_category("  BSD 2 Clause  ") == :permissive
+    end
   end
 
   describe "permissive?/1" do
@@ -128,7 +188,7 @@ defmodule Depscheck.LicenseKnowledgeTest do
       licenses = LicenseKnowledge.list_licenses_by_category(:permissive)
       assert "MIT" in licenses
       assert "Apache-2.0" in licenses
-      assert length(licenses) == 6
+      assert length(licenses) == 7
     end
 
     test "returns weak copyleft licenses" do
