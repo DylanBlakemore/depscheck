@@ -230,17 +230,6 @@ MIT
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Roadmap
-
-Future enhancements may include:
-
-- Support for dual-licensed packages
-- Alternative package suggestions
-- More nuanced compatibility rules
-- JSON output format
-- GitHub Actions annotations
-- Support for git/path dependencies
-
 ## Links
 
 - [License Compatibility Rules](LICENSE_COMPATIBILITY_RULES.md) - Detailed explanation of compatibility logic
