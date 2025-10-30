@@ -74,7 +74,7 @@ Depscheck groups licenses into three main categories:
 
 ---
 
-## Compatibility Rules (MVP)
+## Compatibility Rules
 
 Here's what Depscheck checks:
 
@@ -104,7 +104,7 @@ Here's what Depscheck checks:
 - GPL project using LGPL dependency
 
 ❌ **Examples that DON'T work:**
-- Proprietary/closed-source project using LGPL dependency (flagged as incompatible in MVP)
+- Proprietary/closed-source project using LGPL dependency
 
 **Why:** Weak copyleft licenses are designed to work with most open source licenses. They only require you to share changes to the library itself, not your whole project.
 
@@ -293,7 +293,7 @@ Ignored packages will be skipped during compatibility checking.
 
 ---
 
-## Future Enhancements (Not in MVP)
+## Future Enhancements
 
 Future versions may include:
 - Smarter handling of dual-licensed packages
