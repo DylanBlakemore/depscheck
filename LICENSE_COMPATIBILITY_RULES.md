@@ -1,5 +1,18 @@
 # License Compatibility Rules
 
+> **⚠️ IMPORTANT DISCLAIMER**
+>
+> **This tool and documentation are NOT legal advice.** Depscheck is a guideline and early warning system to help identify potential license compatibility issues in your project dependencies. The rules and recommendations provided here are:
+>
+> - **Educational and informational** - Intended to help you understand common license compatibility patterns
+> - **Simplified guidelines** - Real-world license compatibility can be complex and context-dependent
+> - **Not a substitute for legal counsel** - When in doubt about license compatibility, especially for commercial projects, consult with a qualified attorney who specializes in software licensing law
+> - **May not cover all edge cases** - License interpretations can vary, and there may be exceptions or nuances not captured here
+>
+> Use this tool as a helpful starting point, but do not rely on it as definitive legal guidance. The authors and contributors of Depscheck are not responsible for any legal issues that may arise from using this tool or following these guidelines.
+
+---
+
 This document explains the license compatibility rules used by Depscheck in plain language.
 
 ## Overview
@@ -340,5 +353,13 @@ If Depscheck flags a violation and you're not sure why:
 5. Look for an alternative with a compatible license
 6. Or, if appropriate, consider changing your project's license
 
-Remember: **This is legal advice territory.** When in doubt, consult with someone who understands software licensing law.
+**Important Reminder:** The compatibility rules and guidelines in this document are simplified and provided for educational purposes only. They are not legal advice. License compatibility can be complex, and the applicability of these rules may vary based on:
+
+- Your specific use case and context
+- Jurisdiction and local laws
+- The exact wording of license agreements
+- Court interpretations and legal precedent
+- Your organization's policies and requirements
+
+**When in doubt, especially for commercial projects or complex scenarios, consult with a qualified attorney who specializes in software licensing law.** Depscheck is an early warning system, not a legal guarantee.
 
