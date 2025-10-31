@@ -4,7 +4,7 @@ defmodule Depscheck.MixProject do
   def project do
     [
       app: :depscheck,
-      version: "1.0.7",
+      version: "1.0.8",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -70,7 +70,7 @@ defmodule Depscheck.MixProject do
         "LICENSE_COMPATIBILITY_RULES.md",
         "CHANGELOG.md"
       ],
-      source_ref: "v1.0.7"
+      source_ref: "v1.0.8"
     ]
   end
 
