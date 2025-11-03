@@ -258,7 +258,7 @@ mix version patch  # or minor, or major
 
 ## Inspiration
 
-This project was inspired by [hex_licenses](https://github.com/ericmj/hex_licenses) by Eric Meadows-Jönsson. The approach of reading license information from local `hex_metadata.config` files (rather than making API calls) was adapted from that project. Thank you to Eric and the Hex team for making this pattern available!
+This project was inspired by [hex_licenses]([https://github.com/ericmj/hex_licenses](https://github.com/Cantido/hex_licenses)). The approach of reading license information from local `hex_metadata.config` files (rather than making API calls) was adapted from that project. Thank you to the team for making this pattern available!
 
 ## License
 
