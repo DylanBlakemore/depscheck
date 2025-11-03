@@ -5,7 +5,7 @@ defmodule Depscheck.LicenseKnowledge do
   This module provides license categorization for compatibility checking.
   """
 
-  alias Depscheck.Types
+  alias Depscheck.{LicenseAliases, Types}
 
   @permissive_licenses [
     "MIT",
@@ -137,6 +137,7 @@ defmodule Depscheck.LicenseKnowledge do
     |> String.trim()
     |> normalize_spacing_and_dashes()
     |> normalize_common_variations()
+    |> LicenseAliases.resolve()
   end
 
   defp normalize_spacing_and_dashes(license_name) do
