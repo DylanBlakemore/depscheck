@@ -42,11 +42,15 @@ defmodule Depscheck.Compatibility do
           Types.check_result()
   def check_all(project_license, dependencies, config) do
     ignored = MapSet.new(config.ignored_packages)
-    warnings = generate_warnings(project_license, dependencies, config)
 
-    {violations, checked_deps} =
+    filtered_deps =
       dependencies
       |> Enum.reject(fn dep -> MapSet.member?(ignored, dep.name) end)
+
+    warnings = generate_warnings(project_license, filtered_deps, config)
+
+    {violations, checked_deps} =
+      filtered_deps
       |> Enum.reduce({[], []}, fn dep, {violations_acc, deps_acc} ->
         dep_violations = check_dependency(project_license, dep)
         {violations_acc ++ dep_violations, [dep | deps_acc]}
