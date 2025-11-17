@@ -13,6 +13,8 @@ defmodule Depscheck.LicenseKnowledge do
     "BSD-2-Clause",
     "BSD-3-Clause",
     "BSD-4-Clause",
+    "BSD-0-Clause",
+    "0BSD",
     "ISC",
     "Unlicense"
   ]
@@ -122,7 +124,7 @@ defmodule Depscheck.LicenseKnowledge do
   ## Examples
 
       iex> Depscheck.LicenseKnowledge.list_licenses_by_category(:permissive)
-      ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "ISC", "Unlicense"]
+      ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "BSD-0-Clause", "0BSD", "ISC", "Unlicense"]
   """
   @spec list_licenses_by_category(Types.license_category()) :: [String.t()]
   def list_licenses_by_category(:permissive), do: @permissive_licenses

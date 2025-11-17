@@ -80,6 +80,14 @@ defmodule Depscheck.LicenseAliases do
     "bsd-3" => "bsd-3-clause",
     "bsdv4" => "bsd-4-clause",
     "bsd-4" => "bsd-4-clause",
+    # BSD-0-Clause / 0BSD variations
+    "bsdv0" => "0bsd",
+    "bsd-0" => "0bsd",
+    "bsd-0-clause" => "0bsd",
+    "bsd0" => "0bsd",
+    "0bsd" => "0bsd",
+    "zero-clause-bsd" => "0bsd",
+    "bsd-zero-clause" => "0bsd",
     # MPL-2.0 variations
     "mplv2" => "mpl-2.0",
     "mpl-v2" => "mpl-2.0",

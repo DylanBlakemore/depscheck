@@ -16,6 +16,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
     test "returns :permissive for BSD licenses" do
       assert LicenseKnowledge.get_category("BSD-2-Clause") == :permissive
       assert LicenseKnowledge.get_category("BSD-3-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-0-Clause") == :permissive
+      assert LicenseKnowledge.get_category("0BSD") == :permissive
     end
 
     test "returns :permissive for ISC" do
@@ -68,6 +70,7 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("BSD 2 Clause") == :permissive
       assert LicenseKnowledge.get_category("BSD 3 Clause") == :permissive
       assert LicenseKnowledge.get_category("BSD 4 Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD 0 Clause") == :permissive
       assert LicenseKnowledge.get_category("GPL 2.0") == :strong_copyleft
       assert LicenseKnowledge.get_category("GPL 3.0") == :strong_copyleft
       assert LicenseKnowledge.get_category("LGPL 2.1") == :weak_copyleft
@@ -82,6 +85,16 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("BSD-2-Clause") == :permissive
       assert LicenseKnowledge.get_category("BSD-3-Clause") == :permissive
       assert LicenseKnowledge.get_category("BSD-4-Clause") == :permissive
+      assert LicenseKnowledge.get_category("BSD-0-Clause") == :permissive
+      assert LicenseKnowledge.get_category("0BSD") == :permissive
+    end
+
+    test "handles 0BSD alias variations" do
+      assert LicenseKnowledge.get_category("bsdv0") == :permissive
+      assert LicenseKnowledge.get_category("bsd-0") == :permissive
+      assert LicenseKnowledge.get_category("bsd0") == :permissive
+      assert LicenseKnowledge.get_category("zero-clause-bsd") == :permissive
+      assert LicenseKnowledge.get_category("bsd-zero-clause") == :permissive
     end
 
     test "handles real-world license variations from dependency metadata" do
@@ -128,6 +141,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.permissive?("MIT")
       assert LicenseKnowledge.permissive?("Apache-2.0")
       assert LicenseKnowledge.permissive?("BSD-3-Clause")
+      assert LicenseKnowledge.permissive?("BSD-0-Clause")
+      assert LicenseKnowledge.permissive?("0BSD")
     end
 
     test "returns false for copyleft licenses" do
@@ -188,7 +203,9 @@ defmodule Depscheck.LicenseKnowledgeTest do
       licenses = LicenseKnowledge.list_licenses_by_category(:permissive)
       assert "MIT" in licenses
       assert "Apache-2.0" in licenses
-      assert length(licenses) == 7
+      assert "BSD-0-Clause" in licenses
+      assert "0BSD" in licenses
+      assert length(licenses) == 9
     end
 
     test "returns weak copyleft licenses" do
