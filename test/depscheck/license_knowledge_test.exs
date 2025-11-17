@@ -115,6 +115,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("GPL 3.0") == :strong_copyleft
       assert LicenseKnowledge.get_category("LGPL-2.1") == :weak_copyleft
       assert LicenseKnowledge.get_category("LGPL 3.0") == :weak_copyleft
+      assert LicenseKnowledge.get_category("Apache v2.0") == :permissive
+      assert LicenseKnowledge.get_category("APL 2.0") == :permissive
     end
 
     test "handles complex spacing and punctuation variations" do
