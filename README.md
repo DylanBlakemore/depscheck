@@ -19,7 +19,7 @@ Add `depscheck` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:depscheck, "~> 0.1.0", only: [:dev, :test], runtime: false}
+    {:depscheck, "~> 1.0.11", only: [:dev, :test], runtime: false}
   ]
 end
 ```
