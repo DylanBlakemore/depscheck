@@ -216,6 +216,7 @@ deps = Depscheck.dependencies()
 - BSD-2-Clause, BSD-3-Clause
 - ISC
 - Unlicense
+- CC0-1.0
 
 ### Weak Copyleft
 - LGPL-2.1, LGPL-3.0

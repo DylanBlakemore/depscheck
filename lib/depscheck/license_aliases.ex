@@ -97,7 +97,13 @@ defmodule Depscheck.LicenseAliases do
     "mpl-v2.0" => "mpl-2-0",
     "mpl-v2-0" => "mpl-2-0",
     "mpl2" => "mpl-2-0",
-    "mpl2.0" => "mpl-2-0"
+    "mpl2.0" => "mpl-2-0",
+    # CC0-1.0 (public domain dedication) variations
+    "cc0" => "cc0-1-0",
+    "cc-0" => "cc0-1-0",
+    "cc0-1-0-universal" => "cc0-1-0",
+    "public-domain" => "cc0-1-0",
+    "publicdomain" => "cc0-1-0"
   }
 
   @doc """
