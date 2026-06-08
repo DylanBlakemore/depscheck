@@ -24,6 +24,10 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("ISC") == :permissive
     end
 
+    test "returns :permissive for CC0-1.0" do
+      assert LicenseKnowledge.get_category("CC0-1.0") == :permissive
+    end
+
     test "returns :weak_copyleft for LGPL" do
       assert LicenseKnowledge.get_category("LGPL-2.1") == :weak_copyleft
       assert LicenseKnowledge.get_category("LGPL-3.0") == :weak_copyleft
@@ -95,6 +99,14 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("bsd0") == :permissive
       assert LicenseKnowledge.get_category("zero-clause-bsd") == :permissive
       assert LicenseKnowledge.get_category("bsd-zero-clause") == :permissive
+    end
+
+    test "handles CC0-1.0 alias variations" do
+      assert LicenseKnowledge.get_category("CC0-1.0") == :permissive
+      assert LicenseKnowledge.get_category("CC0") == :permissive
+      assert LicenseKnowledge.get_category("CC-0") == :permissive
+      assert LicenseKnowledge.get_category("CC0 1.0 Universal") == :permissive
+      assert LicenseKnowledge.get_category("Public Domain") == :permissive
     end
 
     test "handles real-world license variations from dependency metadata" do
@@ -207,7 +219,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert "Apache-2.0" in licenses
       assert "BSD-0-Clause" in licenses
       assert "0BSD" in licenses
-      assert length(licenses) == 9
+      assert "CC0-1.0" in licenses
+      assert length(licenses) == 10
     end
 
     test "returns weak copyleft licenses" do
