@@ -9,29 +9,62 @@ defmodule Depscheck.LicenseKnowledge do
 
   @permissive_licenses [
     "MIT",
+    "MIT-0",
+    "X11",
     "Apache-2.0",
+    "Apache-1.1",
     "BSD-2-Clause",
     "BSD-3-Clause",
     "BSD-4-Clause",
     "BSD-0-Clause",
     "0BSD",
+    "BSD-3-Clause-Clear",
     "ISC",
     "Unlicense",
-    "CC0-1.0"
+    "CC0-1.0",
+    "BSL-1.0",
+    "Zlib",
+    "NCSA",
+    "MS-PL",
+    "PostgreSQL",
+    "Python-2.0",
+    "PSF-2.0",
+    "Artistic-2.0",
+    "WTFPL",
+    "UPL-1.0",
+    "OFL-1.1",
+    "Vim",
+    "BlueOak-1.0.0",
+    "AFL-3.0",
+    "ECL-2.0",
+    "MulanPSL-2.0",
+    "CC-BY-4.0"
   ]
 
   @weak_copyleft_licenses [
+    "LGPL-2.0",
     "LGPL-2.1",
     "LGPL-3.0",
+    "MPL-1.1",
     "MPL-2.0",
+    "EPL-1.0",
     "EPL-2.0",
-    "CDDL-1.0"
+    "CDDL-1.0",
+    "CDDL-1.1",
+    "MS-RL",
+    "LPPL-1.3c"
   ]
 
   @strong_copyleft_licenses [
+    "GPL-1.0",
     "GPL-2.0",
     "GPL-3.0",
-    "AGPL-3.0"
+    "AGPL-3.0",
+    "EUPL-1.1",
+    "EUPL-1.2",
+    "CECILL-2.1",
+    "OSL-3.0",
+    "SSPL-1.0"
   ]
 
   @proprietary_licenses [
@@ -124,8 +157,8 @@ defmodule Depscheck.LicenseKnowledge do
 
   ## Examples
 
-      iex> Depscheck.LicenseKnowledge.list_licenses_by_category(:permissive)
-      ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause", "BSD-0-Clause", "0BSD", "ISC", "Unlicense", "CC0-1.0"]
+      iex> :permissive |> Depscheck.LicenseKnowledge.list_licenses_by_category() |> Enum.take(3)
+      ["MIT", "MIT-0", "X11"]
   """
   @spec list_licenses_by_category(Types.license_category()) :: [String.t()]
   def list_licenses_by_category(:permissive), do: @permissive_licenses
