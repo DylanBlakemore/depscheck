@@ -131,6 +131,45 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("APL 2.0") == :permissive
     end
 
+    test "handles SPDX -only / -or-later / + GPL-family variants" do
+      # SPDX deprecated the bare "GPL-3.0" in favour of these forms; all must
+      # still resolve to the correct copyleft category.
+      assert LicenseKnowledge.get_category("GPL-2.0-only") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL-2.0-or-later") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL-3.0-only") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL-3.0-or-later") == :strong_copyleft
+      assert LicenseKnowledge.get_category("GPL-3.0+") == :strong_copyleft
+      assert LicenseKnowledge.get_category("AGPL-3.0-only") == :strong_copyleft
+      assert LicenseKnowledge.get_category("AGPL-3.0-or-later") == :strong_copyleft
+      assert LicenseKnowledge.get_category("LGPL-2.1-only") == :weak_copyleft
+      assert LicenseKnowledge.get_category("LGPL-3.0-or-later") == :weak_copyleft
+      assert LicenseKnowledge.get_category("LGPL-3.0+") == :weak_copyleft
+    end
+
+    test "recognizes additional common permissive licenses" do
+      assert LicenseKnowledge.get_category("BSL-1.0") == :permissive
+      assert LicenseKnowledge.get_category("Boost") == :permissive
+      assert LicenseKnowledge.get_category("Zlib") == :permissive
+      assert LicenseKnowledge.get_category("Artistic-2.0") == :permissive
+      assert LicenseKnowledge.get_category("WTFPL") == :permissive
+      assert LicenseKnowledge.get_category("MIT-0") == :permissive
+      assert LicenseKnowledge.get_category("NCSA") == :permissive
+      assert LicenseKnowledge.get_category("MS-PL") == :permissive
+      assert LicenseKnowledge.get_category("PostgreSQL") == :permissive
+      assert LicenseKnowledge.get_category("Python-2.0") == :permissive
+      assert LicenseKnowledge.get_category("OFL-1.1") == :permissive
+    end
+
+    test "recognizes additional copyleft licenses" do
+      assert LicenseKnowledge.get_category("LGPL-2.0") == :weak_copyleft
+      assert LicenseKnowledge.get_category("EPL-1.0") == :weak_copyleft
+      assert LicenseKnowledge.get_category("MPL-1.1") == :weak_copyleft
+      assert LicenseKnowledge.get_category("MS-RL") == :weak_copyleft
+      assert LicenseKnowledge.get_category("EUPL-1.2") == :strong_copyleft
+      assert LicenseKnowledge.get_category("OSL-3.0") == :strong_copyleft
+      assert LicenseKnowledge.get_category("SSPL-1.0") == :strong_copyleft
+    end
+
     test "handles complex spacing and punctuation variations" do
       # Multiple spaces
       assert LicenseKnowledge.get_category("Apache  2.0") == :permissive
@@ -220,21 +259,25 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert "BSD-0-Clause" in licenses
       assert "0BSD" in licenses
       assert "CC0-1.0" in licenses
-      assert length(licenses) == 10
+      assert "BSL-1.0" in licenses
+      assert "Zlib" in licenses
+      assert length(licenses) == 31
     end
 
     test "returns weak copyleft licenses" do
       licenses = LicenseKnowledge.list_licenses_by_category(:weak_copyleft)
       assert "LGPL-3.0" in licenses
       assert "MPL-2.0" in licenses
-      assert length(licenses) == 5
+      assert "EPL-1.0" in licenses
+      assert length(licenses) == 11
     end
 
     test "returns strong copyleft licenses" do
       licenses = LicenseKnowledge.list_licenses_by_category(:strong_copyleft)
       assert "GPL-3.0" in licenses
       assert "AGPL-3.0" in licenses
-      assert length(licenses) == 3
+      assert "EUPL-1.2" in licenses
+      assert length(licenses) == 9
     end
 
     test "returns proprietary licenses" do

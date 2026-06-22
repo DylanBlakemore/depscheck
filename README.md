@@ -210,23 +210,50 @@ deps = Depscheck.dependencies()
 
 ## Supported Licenses
 
+License names are matched case-insensitively, and common spelling variations are
+normalized automatically (e.g. `Apache 2.0`, `apache-v2.0`, `GPLv3`). The SPDX
+`-only` / `-or-later` suffixes and the legacy `+` operator are recognized for the
+GNU family (e.g. `GPL-3.0-only`, `AGPL-3.0-or-later`, `LGPL-2.1+`).
+
 ### Permissive
-- MIT
-- Apache-2.0
-- BSD-2-Clause, BSD-3-Clause
+- MIT, MIT-0, X11
+- Apache-2.0, Apache-1.1
+- BSD-2-Clause, BSD-3-Clause, BSD-4-Clause, BSD-3-Clause-Clear
+- BSD-0-Clause / 0BSD
 - ISC
 - Unlicense
-- CC0-1.0
+- CC0-1.0, CC-BY-4.0
+- BSL-1.0 (Boost)
+- Zlib
+- NCSA
+- MS-PL
+- PostgreSQL
+- Python-2.0, PSF-2.0
+- Artistic-2.0
+- WTFPL
+- UPL-1.0
+- OFL-1.1
+- Vim
+- BlueOak-1.0.0
+- AFL-3.0
+- ECL-2.0
+- MulanPSL-2.0
 
 ### Weak Copyleft
-- LGPL-2.1, LGPL-3.0
-- MPL-2.0
-- EPL-2.0
-- CDDL-1.0
+- LGPL-2.0, LGPL-2.1, LGPL-3.0
+- MPL-1.1, MPL-2.0
+- EPL-1.0, EPL-2.0
+- CDDL-1.0, CDDL-1.1
+- MS-RL
+- LPPL-1.3c
 
 ### Strong Copyleft
-- GPL-2.0, GPL-3.0
+- GPL-1.0, GPL-2.0, GPL-3.0
 - AGPL-3.0
+- EUPL-1.1, EUPL-1.2
+- CECILL-2.1
+- OSL-3.0
+- SSPL-1.0
 
 ### Proprietary
 - All Rights Reserved
