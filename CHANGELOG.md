@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13] - 2026-06-22
+
+### Fixed
+
+- Greatly expanded the recognized license catalogue across all categories:
+- Permissive: added MIT-0, X11, Apache-1.1, BSD-4-Clause, BSD-3-Clause-Clear, BSL-1.0 (Boost), Zlib, NCSA, MS-PL, PostgreSQL, Python-2.0, PSF-2.0, Artistic-2.0, WTFPL, UPL-1.0, OFL-1.1, Vim, BlueOak-1.0.0, AFL-3.0, ECL-2.0, MulanPSL-2.0, CC-BY-4.0.
+- Strong copyleft: added GPL-1.0, EUPL-1.1, EUPL-1.2, CECILL-2.1, OSL-3.0, SSPL-1.0.
+- Recognition of SPDX -only / -or-later suffixes and the legacy + operator for the GNU family (e.g. GPL-3.0-only, AGPL-3.0-or-later, LGPL-2.1+), all mapping to the correct copyleft category.
+- Cleaned up the alias table to use fully-normalized keys
+
+
 ## [1.0.12] - 2026-06-08
 
 ### Fixed
