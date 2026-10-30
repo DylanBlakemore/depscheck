@@ -158,6 +158,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("PostgreSQL") == :permissive
       assert LicenseKnowledge.get_category("Python-2.0") == :permissive
       assert LicenseKnowledge.get_category("OFL-1.1") == :permissive
+      assert LicenseKnowledge.get_category("Unicode-3.0") == :permissive
+      assert LicenseKnowledge.get_category("Unicode-DFS-2016") == :permissive
     end
 
     test "recognizes additional copyleft licenses" do
@@ -261,7 +263,7 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert "CC0-1.0" in licenses
       assert "BSL-1.0" in licenses
       assert "Zlib" in licenses
-      assert length(licenses) == 31
+      assert length(licenses) == 33
     end
 
     test "returns weak copyleft licenses" do
