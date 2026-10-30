@@ -238,6 +238,7 @@ GNU family (e.g. `GPL-3.0-only`, `AGPL-3.0-or-later`, `LGPL-2.1+`).
 - AFL-3.0
 - ECL-2.0
 - MulanPSL-2.0
+- Unicode-3.0, Unicode-DFS-2016
 
 ### Weak Copyleft
 - LGPL-2.0, LGPL-2.1, LGPL-3.0

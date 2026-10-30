@@ -109,6 +109,16 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("Public Domain") == :permissive
     end
 
+    test "handles Unicode-3.0 alias variations" do
+      assert LicenseKnowledge.get_category("Unicode-3.0") == :permissive
+      assert LicenseKnowledge.get_category("Unicode 3.0") == :permissive
+      assert LicenseKnowledge.get_category("Unicode-3") == :permissive
+      assert LicenseKnowledge.get_category("Unicode v3") == :permissive
+      assert LicenseKnowledge.get_category("Unicode License 3.0") == :permissive
+      assert LicenseKnowledge.get_category("Unicode License v3") == :permissive
+      assert LicenseKnowledge.get_category("Unicode License v3.0") == :permissive
+    end
+
     test "handles real-world license variations from dependency metadata" do
       # These are the exact variations you encountered
       # Should map to BSD-3-Clause
@@ -158,6 +168,8 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert LicenseKnowledge.get_category("PostgreSQL") == :permissive
       assert LicenseKnowledge.get_category("Python-2.0") == :permissive
       assert LicenseKnowledge.get_category("OFL-1.1") == :permissive
+      assert LicenseKnowledge.get_category("Unicode-3.0") == :permissive
+      assert LicenseKnowledge.get_category("Unicode-DFS-2016") == :permissive
     end
 
     test "recognizes additional copyleft licenses" do
@@ -261,7 +273,7 @@ defmodule Depscheck.LicenseKnowledgeTest do
       assert "CC0-1.0" in licenses
       assert "BSL-1.0" in licenses
       assert "Zlib" in licenses
-      assert length(licenses) == 31
+      assert length(licenses) == 33
     end
 
     test "returns weak copyleft licenses" do

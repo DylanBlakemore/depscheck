@@ -38,7 +38,9 @@ defmodule Depscheck.LicenseKnowledge do
     "AFL-3.0",
     "ECL-2.0",
     "MulanPSL-2.0",
-    "CC-BY-4.0"
+    "CC-BY-4.0",
+    "Unicode-3.0",
+    "Unicode-DFS-2016"
   ]
 
   @weak_copyleft_licenses [

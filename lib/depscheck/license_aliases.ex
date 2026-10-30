@@ -183,7 +183,14 @@ defmodule Depscheck.LicenseAliases do
     "cc-0" => "cc0-1-0",
     "cc0-1-0-universal" => "cc0-1-0",
     "public-domain" => "cc0-1-0",
-    "publicdomain" => "cc0-1-0"
+    "publicdomain" => "cc0-1-0",
+    # Unicode-3.0 variations
+    "unicode-3" => "unicode-3-0",
+    "unicode-v3" => "unicode-3-0",
+    "unicode-v3-0" => "unicode-3-0",
+    "unicode-license-3-0" => "unicode-3-0",
+    "unicode-license-v3" => "unicode-3-0",
+    "unicode-license-v3-0" => "unicode-3-0"
   }
 
   @doc """
